@@ -1,9 +1,14 @@
 import Atm_classes
+import json
+from pymongo import MongoClient
 
 def add_user(name, pin) -> Atm_classes.User:
 
+    client =  MongoClient() 
+    atmuserdb = client.atmuserdb
+
     Newuser = Atm_classes.User(name, pin, balance = 5, amount = 3)
-   
+    lst_Users = load_users()
     while True:
         try:
             print ("""
@@ -13,7 +18,7 @@ def add_user(name, pin) -> Atm_classes.User:
                 2. Check Balance 
                 3. Deposit
                 4. Withdraw
-                5. Exit 
+                5. Exit (save to mongodb)
         """)
             option = int(input("Enter 1, 2, 3, 4, or 5:  "))
         except:
@@ -34,23 +39,39 @@ def add_user(name, pin) -> Atm_classes.User:
 
             elif option == 5:
                 Newuser.Account_info()
+                save_to_db(Newuser, atmuserdb)
+                save_users([Newuser])
                 print("Thank you, come again! ")
                 break
               
        
     return Newuser
 
-
-
-def save_users(lst_Users):
-    f = open('saved_users.txt', 'w')
-
-    for newUser in lst_Users:
-        f.write(newUser.name + ',' + str(newUser.pin) + "," + str(float(newUser.balance)) + '\n')
+def save_to_db(user, atmuserdb):
+    dict_user = {
+        "name" : user.name,
+        "pin" : user.pin,
+        "balance" : user.balance}
     
+    atmuserdb.user.insert_one(dict_user)
+
+    
+def save_users(lst_Users):
+    user_dict = {
+        "name" : lst_Users[0].name,
+        "pin" : lst_Users[0].pin,
+        "balance" : lst_Users[0].balance
+    }
+
+    f = open('user.json', 'w')
+
+    json.dump(user_dict, f)
+
     f.close()
+
+
 def load_users():
-    f = open("saved_users.txt", "r")
+    f = open("user.json", "r")
     lst_Users = []
     for line in f:
         user_data = line.split(',')
@@ -59,6 +80,14 @@ def load_users():
     return lst_Users
 
 def main():
+    check_connection = True
+    try:
+        client = MongoClient()
+        atmuserdb = client.newUser
+    except BaseException:
+        print("Sorry, cannot connect!")
+        check_connection = False
+
     print("********Welcome to Bitcoin ATM*********")
 
     lst_Users = load_users()
