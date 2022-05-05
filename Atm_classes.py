@@ -1,19 +1,25 @@
 #Parent Class
 #attibutes 
 class ATM():
-    def __init__(self, name, pin, amount = 0,  balance = 1000):
+    def __init__(self, name, phone, address, pin, amount = 0,  balance = 1000):
         self.name = name
+        self.phone = phone
+        self.address = address
         self.pin = pin
-        self.balance = balance 
         self.amount = amount
+        self.balance = balance 
+        
+        
 
 
     def Account_info (self):
         print("Personal Details")
-        print("")
         print("Name ", self.name)
+        print("phone ", self.phone)
+        print("address ", self.address)
         print("pin  ", self.pin)
         print("Balance ", self.balance)
+
     
     def deposit(self, amount):
         self.amount = amount
@@ -41,8 +47,10 @@ class ATM():
 #Child Class
 class User (ATM):
 
-    def __init__(self, name, pin, balance, amount):
+    def __init__(self, name, phone, address, pin, balance, amount):
         self.name = name
+        self.phone = phone
+        self.address = address
         self.pin = pin
         self.balance = balance
         self.amount = amount
@@ -51,6 +59,8 @@ class User (ATM):
     def Account_info (self):
         print("Personal Details")
         print("Name ", self.name)
+        print("phone ", self.phone)
+        print("address ", self.address)
         print("pin  ", self.pin)
         print("Balance ", self.balance)
 
